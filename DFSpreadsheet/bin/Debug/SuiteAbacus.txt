@@ -1,0 +1,10 @@
+SuiteAbacus.SuiteAcceptanceTests.SuiteSetUp	Not Started
+SuiteAbacus.SuiteAcceptanceTests	Not Started
+SuiteAbacus.SuiteGuiTests.AdministratorAddNewHirewithDefaults	Not Started
+SuiteAbacus.SuiteGuiTests.ManagerChangeLocationWithDefaults	Not Started
+SuiteAbacus.SuiteGuiTests.ManagerChangeResTaxesWithDefaults	Not Started
+SuiteAbacus.SuiteGuiTests.WorkersCompBusinessRules	Not Started
+SuiteAbacus.SuiteGuiTests	Not Started
+SuiteAbacus.SuiteManual	Not Started
+SuiteAbacus.SuitePsrTests	Not Started
+SuiteAbacus	Not Started

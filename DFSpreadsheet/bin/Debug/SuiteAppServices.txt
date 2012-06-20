@@ -1,0 +1,4 @@
+SuiteAppServices.SuiteAcceptanceTests.SuiteSetUp	Not Started
+SuiteAppServices.SuiteAcceptanceTests	Not Started
+SuiteAppServices.SuitePsrTests	Not Started
+SuiteAppServices	Not Started
