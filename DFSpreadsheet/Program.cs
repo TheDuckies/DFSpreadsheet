@@ -1,29 +1,27 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace DFSpreadsheet
 {
-    class Program
+    internal class Program
     {
         private const string BASEPATH = @"C:\Projects\FitNesseRoot\";
         private const string OptimizePath = @"C:\Projects\Optimize\FitNesseList\";
         private static DirectoryInfo root;
-        
-        static void Main(string[] args)
+
+        private static void Main(string[] args)
         {
-           //Feed in root for Fitnesse
+            //Feed in root for Fitnesse
 
             Directory.SetCurrentDirectory(OptimizePath);
-            root = new System.IO.DirectoryInfo(BASEPATH);
-            
-            
+            root = new DirectoryInfo(BASEPATH);
+
+
             recurse(root);
 
             DirectoryInfo[] directoryList = root.GetDirectories();
-            if(directoryList[0].Parent == root)
+            if (directoryList[0].Parent == root)
             {
                 /*
                  * if parent == root
@@ -42,7 +40,7 @@ namespace DFSpreadsheet
 
             DirectoryInfo[] subdirectories = newroot.GetDirectories();
 
-            if(newroot.Parent.Name == "FitNesseRoot")
+            if (newroot.Parent.Name == "FitNesseRoot")
             {
                 string sheet = newroot.Name;
                 Console.WriteLine(sheet);
@@ -51,28 +49,28 @@ namespace DFSpreadsheet
                 // else, add to sheet
             }
 
-            foreach (var subdirectory in subdirectories)
+            foreach (DirectoryInfo subdirectory in subdirectories)
             {
                 recurse(subdirectory);
             }
 
-            FileInfo[] testCases = newroot.GetFiles("content.txt");
 
-            foreach (var testCase in testCases)
+            if (subdirectories.Count() == 1)
             {
-                //send off to ConversionOptimizer using
-                WriteToSheet(testCase.FullName.Replace(BASEPATH, "").Replace('\\', '.').Replace(".content.txt", ""));
-               
+                FileInfo[] testCases = newroot.GetFiles("content.txt");
+                foreach (FileInfo testCase in testCases)
+                {
+                    //send off to ConversionOptimizer using
+                    WriteToSheet(testCase.FullName.Replace(BASEPATH, "").Replace('\\', '.').Replace(".content.txt", ""));
+                }
             }
-            
         }
 
         public static void WriteToSheet(string testCase)
         {
-            
             string sheetName = testCase.Split('.')[0];
 
-            StreamWriter suiteSheet = new StreamWriter(File.Open(sheetName + ".txt", FileMode.Append));
+            var suiteSheet = new StreamWriter(File.Open(sheetName + ".txt", FileMode.Append));
 
             suiteSheet.WriteLine(testCase + '\t' + "Not Started");
             suiteSheet.Close();
