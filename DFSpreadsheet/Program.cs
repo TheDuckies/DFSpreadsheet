@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -9,28 +10,34 @@ namespace DFSpreadsheet
         private const string BASEPATH = @"C:\Projects\FitNesseRoot\";
         private const string OptimizePath = @"C:\Projects\Optimize\FitNesseList\";
         private static DirectoryInfo root;
+        private static Dictionary<string, List<string>> sheets;
 
         private static void Main(string[] args)
         {
             //Feed in root for Fitnesse
-
+            sheets = new Dictionary<string, List<string>>();
             Directory.SetCurrentDirectory(OptimizePath);
+
             root = new DirectoryInfo(BASEPATH);
-
-
+            
             recurse(root);
 
-            DirectoryInfo[] directoryList = root.GetDirectories();
-            if (directoryList[0].Parent == root)
+            foreach (string key in sheets.Keys)
             {
-                /*
-                 * if parent == root
-                 * check if this.tostring exists as sheet
-                 * if not, create sheet.
-                 * 
-                 * else 
-                 */
+                List<string> writingToFile;
+
+                sheets.TryGetValue(key, out writingToFile);
+
+                var suiteSheet = new StreamWriter(File.Open(key + ".txt", FileMode.OpenOrCreate));
+
+                foreach (string line in writingToFile)
+                {
+                    suiteSheet.WriteLine(line);
+                }
+
+                suiteSheet.Close();
             }
+
         }
 
         private static void recurse(DirectoryInfo newroot)
@@ -61,19 +68,25 @@ namespace DFSpreadsheet
                 foreach (FileInfo testCase in testCases)
                 {
                     //send off to ConversionOptimizer using
-                    WriteToSheet(testCase.FullName.Replace(BASEPATH, "").Replace('\\', '.').Replace(".content.txt", ""));
+                    AppendToSheet(testCase.FullName.Replace(BASEPATH, "").Replace('\\', '.').Replace(".content.txt", ""));
                 }
             }
         }
 
-        public static void WriteToSheet(string testCase)
+        public static void AppendToSheet(string testCase)
         {
             string sheetName = testCase.Split('.')[0];
+            
+            List<string> currSheet;
+            
+            if(!sheets.TryGetValue(sheetName, out currSheet))
+            {
+                currSheet = new List<string>();
+                sheets.Add(sheetName, currSheet);
 
-            var suiteSheet = new StreamWriter(File.Open(sheetName + ".txt", FileMode.Append));
+            }
 
-            suiteSheet.WriteLine(testCase + '\t' + "Not Started");
-            suiteSheet.Close();
+            currSheet.Add(testCase + '\t' + "Not Started");
         }
     }
 }
