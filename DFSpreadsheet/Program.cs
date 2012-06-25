@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 
 namespace DFSpreadsheet
 {
@@ -9,18 +10,16 @@ namespace DFSpreadsheet
     {
         private const string BASEPATH = @"C:\Projects\FitNesseRoot\";
         private const string OptimizePath = @"C:\Projects\Optimize\FitNesseList\";
-        private static DirectoryInfo root;
         private static Dictionary<string, List<string>> sheets;
 
         private static void Main(string[] args)
         {
             //Feed in root for Fitnesse
             sheets = new Dictionary<string, List<string>>();
+
             Directory.SetCurrentDirectory(OptimizePath);
 
-            root = new DirectoryInfo(BASEPATH);
-            
-            recurse(root);
+            recurse(new DirectoryInfo(BASEPATH));
 
             foreach (string key in sheets.Keys)
             {
@@ -35,6 +34,7 @@ namespace DFSpreadsheet
                     suiteSheet.WriteLine(line);
                 }
 
+                Thread.Sleep(100);
                 suiteSheet.Close();
             }
 
@@ -61,16 +61,28 @@ namespace DFSpreadsheet
                 recurse(subdirectory);
             }
 
-
+            
             if (subdirectories.Count() == 1)
             {
                 FileInfo[] testCases = newroot.GetFiles("content.txt");
                 foreach (FileInfo testCase in testCases)
                 {
                     //send off to ConversionOptimizer using
+
+                    if (testCase.DirectoryName.ToUpper().Contains("MACRO") || testCase.DirectoryName.ToUpper().Contains("SETUP") ||testCase.DirectoryName.ToUpper().Contains("TEARDOWN"))
+                        return;
+
+                    string[] name = testCase.DirectoryName.Split('\\');
+
+                    int max = name.GetLength(0)- 1;
+
+                    if (name[max].ToUpper().Contains("SETUP") || name[max].ToUpper().Contains("TEARDOWN") || name[max].ToUpper().Contains("SUITE"))
+                        return;
+
                     AppendToSheet(testCase.FullName.Replace(BASEPATH, "").Replace('\\', '.').Replace(".content.txt", ""));
                 }
-            }
+             }
+            
         }
 
         public static void AppendToSheet(string testCase)
