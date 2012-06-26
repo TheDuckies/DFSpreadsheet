@@ -59,16 +59,36 @@ namespace DFSpreadsheet
             foreach (DirectoryInfo subdirectory in subdirectories)
             {
                 recurse(subdirectory);
+                
+                if (subdirectory.Name == ".svn")
+                    continue;
+                
+                try
+                {
+                    StreamReader folder = new StreamReader(subdirectory.FullName + @"\properties.xml");
+
+                    string curr = folder.ReadToEnd();
+                        if (curr.Contains("<Test/>") || curr.Contains("<Test>true</Test>"))
+                            AppendToSheet(subdirectory.FullName.Replace(BASEPATH, "").Replace('\\', '.').Replace(".content.txt", ""));
+                    folder.Close();
+                }
+                catch (Exception)
+                {
+
+                }
+
+
+
             }
 
-            
+            /*
             if (subdirectories.Count() == 1)
             {
                 FileInfo[] testCases = newroot.GetFiles("content.txt");
                 foreach (FileInfo testCase in testCases)
                 {
                     //send off to ConversionOptimizer using
-
+                    
                     if (testCase.DirectoryName.ToUpper().Contains("MACRO") || testCase.DirectoryName.ToUpper().Contains("SETUP") ||testCase.DirectoryName.ToUpper().Contains("TEARDOWN"))
                         return;
 
@@ -78,10 +98,11 @@ namespace DFSpreadsheet
 
                     if (name[max].ToUpper().Contains("SETUP") || name[max].ToUpper().Contains("TEARDOWN") || name[max].ToUpper().Contains("SUITE"))
                         return;
-
+                    
                     AppendToSheet(testCase.FullName.Replace(BASEPATH, "").Replace('\\', '.').Replace(".content.txt", ""));
                 }
              }
+             */
             
         }
 
